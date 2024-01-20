@@ -62,6 +62,8 @@ def clean_data():
     df = df.drop('average_frac_fluid_per_stage', axis=1)
     df = df.dropna()
 
+    # infs will cause models to fail
+    # # https://stackoverflow.com/questions/21827594/raise-linalgerrorsvd-did-not-converge-linalgerror-svd-did-not-converge-in-m
     for column in df:
         df = df[~df[column].isin([math.inf])]
     # for column in df:
