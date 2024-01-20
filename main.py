@@ -42,28 +42,22 @@ arr = np.loadtxt("data/training.csv",
 
 df = pd.read_csv("data/training.csv")
 df = df.drop('Unnamed: 0', axis=1)
-##df.dropna(subset = ['bh_x','bh_y'], inplace = True)
 df.dropna(subset = ['OilPeakRate'], inplace = True)
 
 string_columns_to_float(df)
-
-# df = pd.DataFrame([[1, 2, "Hello"], [4, 5, "There"], [7, 8, "Guys"]], columns=['A', 'B', 'String'])
-# string_columns_to_float(df)
 
 # for o in range(15):
 #     df.drop(df['OilPeakRate'].idxmax(), inplace=True)
 #     df.drop(df['OilPeakRate'].idxmin(), inplace=True)
 
 df_stages = df[~df["number_of_stages"].isna()]
-
 df = df[df["number_of_stages"].isna()]
 df = df.drop('number_of_stages', axis=1)
 df = df.drop('average_stage_length', axis=1)
 df = df.drop('average_proppant_per_stage', axis=1)
 df = df.drop('average_frac_fluid_per_stage', axis=1)
-for column in df:
-    percent = ((25058 - df[column].isna().sum()) / 25058)
-    print(column + " : " + str(percent))
+df = df.dropna()
+
 
 # plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
 plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
