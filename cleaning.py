@@ -4,8 +4,7 @@ import numpy as np
 import sklearn as skl
 from sklearn.linear_model import ElasticNet
 import math
-# I hate being responsible
-pd.options.mode.chained_assignment = None  # default='warn'
+
 
 def string_columns_to_float(df):
     # Convert all columns which are composed of strings to floats
@@ -16,7 +15,10 @@ def string_columns_to_float(df):
             values = list(set(df[colname]))
             for i in range(len(values)):
                 # https://stackoverflow.com/questions/20625582/how-to-deal-with-settingwithcopywarning-in-pandas
-                df[colname][df[colname] == values[i]] = i+1
+                # df[colname][df[colname] == values[i]] = i+1
+                df.loc[df[colname] == values[i], colname] = i+1
+            # print(values)
+            # print(df[colname])
 
 
 def print_corr(df):
