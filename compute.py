@@ -6,6 +6,7 @@ import sklearn as skl
 from sklearn import preprocessing
 import math
 
+
 class model():
     def __init__(self, data, num_tests):
         self.num_tests = num_tests
@@ -31,6 +32,7 @@ class model():
     def plot_bars(self, num_bars):
         # Plots a sample of predictions and their corresponding actual values
         # Input: num_bars is number of bars on chart
+        print("Plotting bars")
         x_axis = np.arange(num_bars)
         plt.bar(x_axis - 0.2, self.results[:num_bars], 0.4, 'prediction')
         plt.bar(x_axis + 0.2, self.actual[:num_bars], 0.4, 'actual')
@@ -40,8 +42,9 @@ class model():
     def plot_residuals(self, col_idx):
         # Plot residuals ordered by the value of column col_idx
         # Input: col_idx - index of column to sort data by
+        print("Plotting residuals")
         diff = self.actual - self.results
         sort_idxs = np.argsort(self.testing_data[:, col_idx].T)
         plt.plot(range(len(diff)), diff[sort_idxs], 'r.')
-        plt.title("Residuals ordered by surface_x")
+        plt.title(f"Residuals ordered by column {col_idx}")
         plt.show()
