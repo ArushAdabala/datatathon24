@@ -41,7 +41,7 @@ arr = np.loadtxt("data/training.csv",
 
 df = pd.read_csv("data/training.csv")
 df = df.drop('Unnamed: 0', axis=1)
-df.dropna(subset = ['bh_x','bh_y'], inplace = True)
+##df.dropna(subset = ['bh_x','bh_y'], inplace = True)
 df.dropna(subset = ['OilPeakRate'], inplace = True)
 
 string_columns_to_float(df)
