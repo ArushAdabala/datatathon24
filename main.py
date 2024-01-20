@@ -34,10 +34,12 @@ print("Testing: prediction vs actual", df_arr[-1,:-1] @ x, df_arr[-1,-1])
 # x = model.coef_
 
 # Set tiny coefficients to zero and print the number of nonzero coefficients
-x[abs(x) < 1e-10] = 0
+x[abs(x) < 1e-5] = 0
 print(f"Number of nonzero coefficients: {np.argwhere(x).shape[0]}")
 print(f"Percent of coefficients that are nonzero: {100 * np.argwhere(x).shape[0] / x.shape[0]}%")
 
+
 # Plot coefficients
-plt.plot(x, label=list(df.head()))
+plt.bar(list(df.head())[:-1], x)
+plt.xticks(fontsize=10, rotation=-90)
 plt.show()
