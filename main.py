@@ -70,6 +70,7 @@ df = df.dropna()
 
 df_arr = np.float64(df.to_numpy())
 # Solve directly with lstsq
+# https://stackoverflow.com/questions/21827594/raise-linalgerrorsvd-did-not-converge-linalgerror-svd-did-not-converge-in-m
 x, residuals, rank, s = np.linalg.lstsq(df_arr[:-1,:-1], df_arr[:-1,-1], rcond=None)
 
 print(df_arr[-1,:-1] @ x, df_arr[-1,-1])
