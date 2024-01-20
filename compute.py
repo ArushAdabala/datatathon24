@@ -21,7 +21,7 @@ class model():
         self.testing_data = robust.transform(self.testing_data)
     
     def set_results(self, results):
-        self.results = self.testing_data @ results
+        self.results = results
     
     def get_RMSE(self):
         # Preduce RMSE between self.actual and self.results
