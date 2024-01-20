@@ -19,9 +19,9 @@ df = clean_data()
 
 df_arr = np.float64(df.to_numpy())
 
-robust = preprocessing.StandardScaler()
+robust = preprocessing.RobustScaler()
 
-num_test = 25
+num_test = 1000
 training = df_arr[:-num_test,:-1]
 robust_training = robust.fit_transform(training)
 # Solve directly with lstsq
@@ -31,7 +31,14 @@ x, residuals, rank, s = np.linalg.lstsq(robust_training, df_arr[:-num_test,-1], 
 
 testing = df_arr[-num_test:,:-1]
 robust_testing = robust.transform(testing)
-print("Linear Model Testing RMSE: ", np.linalg.norm(robust_testing @ x - df_arr[-num_test:,-1]))
+
+mse = 0
+test_results = robust_testing @ x
+test_actual = df_arr[-num_test:,-1]
+for i in range(num_test):
+    mse += (test_actual[i] - test_results[i]) ** 2
+#linar normalization = np.linalg.norm(test_results - test_actual)
+print("Linear Model Testing RMSE: ", math.sqrt(mse / num_test))
 
 # Plot some examples of predictions
 x_axis = np.arange(num_test)
