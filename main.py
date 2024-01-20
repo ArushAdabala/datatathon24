@@ -69,8 +69,6 @@ df = df.dropna()
 
 
 df_arr = np.float64(df.to_numpy())
-
-# ------Solve for coefficients-------
 # Solve directly with lstsq
 x, residuals, rank, s = np.linalg.lstsq(df_arr[:-1,:-1], df_arr[:-1,-1], rcond=None)
 
