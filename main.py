@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import sklearn as skl
+from sklearn.linear_model import ElasticNet
 
 # I hate being responsible
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -67,3 +68,18 @@ for column in df:
 # plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
 plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
 plt.show()
+
+
+# ------Solve for coefficients-------
+# Solve directly with lstsq
+# x, residuals, rank, s = np.linalg.lstsq(material_arr, target_vector, rcond=None)
+
+# Solve using ElasticNet to get more reasonable coefficients
+model_alpha = 15  # 10 for images
+l1_ratio = 0.8  # 1.0 is LASSO, 0.1 is close to ridge
+model = ElasticNet(alpha=model_alpha, l1_ratio=l1_ratio, fit_intercept=False, selection='random', max_iter=10000)
+model.fit(material_arr, target_vector)
+x = model.coef_
+
+x[abs(x) < 1e-10] = 0
+# print(np.argwhere(x).shape[0])
