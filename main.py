@@ -67,14 +67,15 @@ df = df.dropna()
 # plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
 # plt.show()
 
-print(df.to_numpy())
 
+df_arr = np.float64(df.to_numpy())
 
 # ------Solve for coefficients-------
 # Solve directly with lstsq
-x, residuals, rank, s = np.linalg.lstsq(df.to_numpy()[:-1,:-1], df.to_numpy()[:-1,-1], rcond=None)
+# https://stackoverflow.com/questions/21827594/raise-linalgerrorsvd-did-not-converge-linalgerror-svd-did-not-converge-in-m
+x, residuals, rank, s = np.linalg.lstsq(df_arr[:-1,:-1], df_arr[:-1,-1], rcond=None)
 
-print(df.to_numpy()[-1,:-1] @ x, df.to_numpy()[-1,-1])
+print(df_arr[-1,:-1] @ x, df_arr[-1,-1])
 
 # Solve using ElasticNet to get more reasonable coefficients
 # model_alpha = 15  # 10 for images
