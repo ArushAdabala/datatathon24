@@ -86,5 +86,7 @@ print(df.to_numpy()[-1,:-1] @ x, df.to_numpy()[-1,-1])
 # x[abs(x) < 1e-10] = 0
 # print(np.argwhere(x).shape[0])
 
+# Plot coefficients
+# TODO: make it display the solumn names on the x axis
 plt.plot(x)
 plt.show()
