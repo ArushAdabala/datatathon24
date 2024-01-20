@@ -42,4 +42,12 @@ print(f"Percent of coefficients that are nonzero: {100 * np.argwhere(x).shape[0]
 # Plot coefficients
 plt.bar(list(df.head())[:-1], x)
 plt.xticks(fontsize=10, rotation=-90)
+plt.title("Coefficients")
+plt.show()
+
+# Plot residuals
+# TODO: Residuals isn't the right thing to plot I think
+print(residuals.shape)
+plt.plot(range(len(residuals)), residuals, 'r.')
+plt.title("Residuals")
 plt.show()
