@@ -1,4 +1,3 @@
-from cleaning import clean_data
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import numpy as np

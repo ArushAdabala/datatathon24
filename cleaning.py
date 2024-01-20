@@ -64,6 +64,3 @@ def clean_data():
     #     # print(column + " : " + str(percent))
 
     return df
-    # plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
-    # plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
-    # plt.show()
