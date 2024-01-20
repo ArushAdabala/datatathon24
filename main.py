@@ -10,6 +10,7 @@ arr = np.loadtxt("data/training.csv",
 df = pd.read_csv("data/training.csv")
 df = df.drop('Unnamed: 0', axis=1)
 df.dropna(subset = ['bh_x','bh_y'], inplace = True)
+# dfxy = df[['surface_x','surface_y']]
 
 df_stages = df[~df["number_of_stages"].isna()]
 
