@@ -63,23 +63,30 @@ df = df.drop('average_proppant_per_stage', axis=1)
 df = df.drop('average_frac_fluid_per_stage', axis=1)
 for column in df:
     percent = ((25058 - df[column].isna().sum()) / 25058)
-    print(column + " : " + str(percent))
+    # print(column + " : " + str(percent))
 
 # plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
-plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
-plt.show()
+# plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
+# plt.show()
+
+print(df.to_numpy())
 
 
 # ------Solve for coefficients-------
 # Solve directly with lstsq
-# x, residuals, rank, s = np.linalg.lstsq(material_arr, target_vector, rcond=None)
+x, residuals, rank, s = np.linalg.lstsq(df.to_numpy()[:-1,:-1], df.to_numpy()[:-1,-1], rcond=None)
+
+print(df.to_numpy()[-1,:-1] @ x, df.to_numpy()[-1,-1])
 
 # Solve using ElasticNet to get more reasonable coefficients
-model_alpha = 15  # 10 for images
-l1_ratio = 0.8  # 1.0 is LASSO, 0.1 is close to ridge
-model = ElasticNet(alpha=model_alpha, l1_ratio=l1_ratio, fit_intercept=False, selection='random', max_iter=10000)
-model.fit(material_arr, target_vector)
-x = model.coef_
+# model_alpha = 15  # 10 for images
+# l1_ratio = 0.8  # 1.0 is LASSO, 0.1 is close to ridge
+# model = ElasticNet(alpha=model_alpha, l1_ratio=l1_ratio, fit_intercept=False, selection='random', max_iter=10000)
+# model.fit(material_arr, target_vector)
+# x = model.coef_
 
-x[abs(x) < 1e-10] = 0
+# x[abs(x) < 1e-10] = 0
 # print(np.argwhere(x).shape[0])
+
+plt.plot(x)
+plt.show()
