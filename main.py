@@ -11,39 +11,33 @@ from cleaning import clean_data
 # pd.options.mode.chained_assignment = None  # default='warn'
 pd.set_option('chained_assignment',None)
 
+df = clean_data()
 # Plot coordinate values
 # plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
 # plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
 # plt.show()
-df = clean_data()
-
 df_arr = np.float64(df.to_numpy())
 
 robust = preprocessing.RobustScaler()
 
-num_test = 1000
+num_test = 25
 training = df_arr[:-num_test,:-1]
 robust_training = robust.fit_transform(training)
 # Solve directly with lstsq
-# https://stackoverflow.com/questions/21827594/raise-linalgerrorsvd-did-not-converge-linalgerror-svd-did-not-converge-in-m
-# x, residuals, rank, s = np.linalg.lstsq(df_arr[:-num_test,:-1], df_arr[:-num_test,-1], rcond=None)
 x, residuals, rank, s = np.linalg.lstsq(robust_training, df_arr[:-num_test,-1], rcond=None)
 
 testing = df_arr[-num_test:,:-1]
 robust_testing = robust.transform(testing)
 
-mse = 0
+# Calculate RMSE using dot products
 test_results = robust_testing @ x
 test_actual = df_arr[-num_test:,-1]
-for i in range(num_test):
-    mse += (test_actual[i] - test_results[i]) ** 2
-#linar normalization = np.linalg.norm(test_results - test_actual)
-print("Linear Model Testing RMSE: ", math.sqrt(mse / num_test))
+print("Linear Model Testing RMSE: ", np.sqrt(np.dot(test_actual - test_results, test_actual - test_results) / num_test))
 
 # Plot some examples of predictions
 x_axis = np.arange(num_test)
-plt.bar(x_axis-0.2, robust_testing @ x, 0.4, 'prediction')
-plt.bar(x_axis+0.2, df_arr[-num_test:,-1], 0.4, 'actual')
+plt.bar(x_axis-0.2, test_results, 0.4, 'prediction')
+plt.bar(x_axis+0.2, test_actual, 0.4, 'actual')
 plt.title("Sample of predictions vs actual")
 plt.show()
 
