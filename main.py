@@ -8,7 +8,7 @@ from cleaning import clean_data
 # I hate being responsible
 pd.options.mode.chained_assignment = None  # default='warn'
 
-
+# Plot coordinate values
 # plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
 # plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
 # plt.show()
@@ -28,10 +28,11 @@ print(df_arr[-1,:-1] @ x, df_arr[-1,-1])
 # model.fit(material_arr, target_vector)
 # x = model.coef_
 
-# x[abs(x) < 1e-10] = 0
-# print(np.argwhere(x).shape[0])
+# Set tiny coefficients to zero and print the number of nonzero coefficients
+x[abs(x) < 1e-10] = 0
+print(f"Number of nonzero coefficients: {np.argwhere(x).shape[0]}")
+print(f"Percent of coefficients that are nonzero: {100 * np.argwhere(x).shape[0] / x.shape[0]}%")
 
 # Plot coefficients
-# TODO: make it display the solumn names on the x axis
-plt.plot(x)
+plt.plot(x, label=list(df.head()))
 plt.show()
