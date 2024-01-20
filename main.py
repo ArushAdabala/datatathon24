@@ -11,11 +11,9 @@ df = pd.read_csv("data\\training.csv")
 df = df.drop('Unnamed: 0', axis=1)
 df.dropna(subset = ['bh_x','bh_y'], inplace = True)
 dfxy = df[['surface_x','surface_y']]
-print(dfxy)
 
-coords = np.float32(arr[1:,1:3])
 
-print(coords)
 
-plt.plot(coords[:,0], coords[:,1], '.')
+
+plt.plot(df['surface_x'], df['surface_y'], '.')
 plt.show()
