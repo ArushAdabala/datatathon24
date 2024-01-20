@@ -1,8 +1,14 @@
+from cleaning import clean_data
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = clean_data()
+
 # Example data
 X = np.random.rand(100, 10)  # 100 samples, 10 features each
 y = np.random.rand(100, 1)   # 100 target values
