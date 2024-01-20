@@ -88,50 +88,10 @@ print(f"Test Loss: {loss:.4f}, Test RMSE: {rmse:.4f}")
 # Plotting the learning curves
 plt.figure(figsize=(12, 6))
 
-# Plot training & validation loss values
-plt.subplot(1, 2, 1)
-plt.plot(history.history['loss'], label='Train')
-plt.plot(history.history['val_loss'], label='Validation')
-plt.title('Model loss')
-plt.ylabel('Loss')
-plt.xlabel('Epoch')
-plt.legend()
-
-# Plot training & validation RMSE values
-plt.subplot(1, 2, 2)
-plt.plot(history.history['root_mean_squared_error'], label='Train RMSE')
-plt.plot(history.history['val_root_mean_squared_error'], label='Validation RMSE')
-plt.title('Root Mean Squared Error')
-plt.ylabel('RMSE')
-plt.xlabel('Epoch')
-plt.legend()
-
 plt.show()
 
 # Generate predictions
 predictions = model.predict(X_test).flatten()
-
-"""
-
-# Calculate differences between predictions and actual values
-differences = predictions - y_test
-# Plot the differences
-plt.figure(figsize=(10, 6))
-plt.scatter(range(len(differences)), differences, alpha=0.6)
-plt.title('Differences between Predictions and Actual Values')
-plt.xlabel('Test Sample Index')
-plt.ylabel('Prediction - Actual Value')
-plt.show()
-
-# plot a histogram of the differences
-plt.figure(figsize=(10, 6))
-plt.hist(differences, bins=50, alpha=0.7, color='blue')
-plt.title('Histogram of Prediction Differences')
-plt.xlabel('Prediction - Actual Value')
-plt.ylabel('Frequency')
-plt.show()
-"""
-
 
 # Select a random sample of 25 or 30 values from the test set and their corresponding predictions
 sample_size = 25  # or 30 if you prefer
