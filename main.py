@@ -10,7 +10,8 @@ arr = np.loadtxt("data\\training.csv",
 df = pd.read_csv("data\\training.csv")
 df = df.drop('Unnamed: 0', axis=1)
 df.dropna(subset = ['bh_x','bh_y'], inplace = True)
-print(df)
+dfxy = df[['surface_x','surface_y']]
+print(dfxy)
 
 coords = np.float32(arr[1:,1:3])
 
