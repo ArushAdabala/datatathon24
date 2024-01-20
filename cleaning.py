@@ -59,6 +59,9 @@ def clean_data():
     df = df.drop('average_proppant_per_stage', axis=1)
     df = df.drop('average_frac_fluid_per_stage', axis=1)
     df = df.dropna()
+
+    for column in df:
+        df = df[~df[column].isin([math.inf])]
     # for column in df:
     #     percent = ((25058 - df[column].isna().sum()) / 25058)
     #     # print(column + " : " + str(percent))

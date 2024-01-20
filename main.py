@@ -14,15 +14,13 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
 # plt.show()
 df = clean_data()
-for column in df:
-    df = df[~df[column].isin([math.inf])]
 
 df_arr = np.float64(df.to_numpy())
 
 
 # Solve directly with lstsq
 # https://stackoverflow.com/questions/21827594/raise-linalgerrorsvd-did-not-converge-linalgerror-svd-did-not-converge-in-m
-x, residuals, rank, s = np.linalg.lstsq(df_arr[:-1,:-100], df_arr[:-1,-1], rcond=None)
+x, residuals, rank, s = np.linalg.lstsq(df_arr[:-1,:-1], df_arr[:-1,-1], rcond=None)
 
 print("Testing: prediction vs actual", df_arr[-1,:-1] @ x, df_arr[-1,-1])
 
