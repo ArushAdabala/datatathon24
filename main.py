@@ -3,9 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sklearn as skl
 
-# using loadtxt()
-arr = np.loadtxt("data\\training.csv",
-                 delimiter=",", dtype=str)
 
 df = pd.read_csv("data\\training.csv")
 df = df.drop('Unnamed: 0', axis=1)
