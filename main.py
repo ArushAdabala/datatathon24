@@ -10,9 +10,12 @@ arr = np.loadtxt("data/training.csv",
 df = pd.read_csv("data/training.csv")
 df = df.drop('Unnamed: 0', axis=1)
 df.dropna(subset = ['bh_x','bh_y'], inplace = True)
-# dfxy = df[['surface_x','surface_y']]
+
+for o in range(15):
+    df.drop(df['OilPeakRate'].idxmax(), inplace=True)
+    df.drop(df['OilPeakRate'].idxmin(), inplace=True)
 
 
-plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
-plt.plot(df['surface_x'], df['surface_y'], 'b.')
+# plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
+plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
 plt.show()
