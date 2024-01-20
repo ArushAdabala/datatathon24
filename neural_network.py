@@ -4,6 +4,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.metrics import RootMeanSquaredError
 from cleaning import clean_data
+import math
 
 # Clean and prepare the data
 main_data = clean_data()
