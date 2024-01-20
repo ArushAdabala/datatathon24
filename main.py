@@ -10,10 +10,9 @@ arr = np.loadtxt("data\\training.csv",
 df = pd.read_csv("data\\training.csv")
 df = df.drop('Unnamed: 0', axis=1)
 df.dropna(subset = ['bh_x','bh_y'], inplace = True)
-dfxy = df[['surface_x','surface_y']]
+# dfxy = df[['surface_x','surface_y']]
 
 
-
-
-plt.plot(df['surface_x'], df['surface_y'], '.')
+plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
+plt.plot(df['surface_x'], df['surface_y'], 'b.')
 plt.show()
