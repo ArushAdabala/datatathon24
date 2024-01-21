@@ -33,6 +33,36 @@ def print_corr(df):
         for idx in [i for i in high_corr_idxs if i < row]:  # Only need lower triangle
             print(corr_arr[row, idx], list(corr.head())[row], list(corr.head())[idx])
 
+def clean_test():
+    # Returns dataframe of cleaned training.csv
+
+    df = pd.read_csv("data/scoring.csv")
+    df = df.drop('Unnamed: 0', axis=1)
+    df = df.drop('pad_id', axis = 1)
+    df = df.drop('frac_type', axis=1)
+
+    string_columns_to_float(df)
+
+    # Optionally drop the top and bottom 15 OilPeakRates (possible outliers)
+    # for o in range(15):
+    #     df.drop(df['OilPeakRate'].idxmax(), inplace=True)
+    #     df.drop(df['OilPeakRate'].idxmin(), inplace=True)
+
+    # Drop known problem columns
+    df_stages = df[~df["number_of_stages"].isna()]
+    df = df[df["number_of_stages"].isna()]
+    df = df.drop('number_of_stages', axis=1)
+    df = df.drop('average_stage_length', axis=1)
+    df = df.drop('average_proppant_per_stage', axis=1)
+    df = df.drop('average_frac_fluid_per_stage', axis=1)
+    df = df.dropna()
+
+    # infs will cause models to fail
+    # # https://stackoverflow.com/questions/21827594/raise-linalgerrorsvd-did-not-converge-linalgerror-svd-did-not-converge-in-m
+    for column in df:
+        df = df[~df[column].isin([np.inf])]
+
+    return df
 
 def clean_data():
     # Returns dataframe of cleaned training.csv
@@ -98,6 +128,7 @@ def find_largest_independent_set(graph):
 def remove_correlations(df, base):
     # base should be 0.9 or 0.8
     df.drop("OilPeakRate", axis = 1)
+
     corr = df.corr()
     corr_arr = corr.to_numpy()
 
