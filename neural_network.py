@@ -10,6 +10,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 from cleaning import *
 import matplotlib.pyplot as plt
 
+# Model number 2: Neural Network
 
 class MyHyperModel(HyperModel):
     def __init__(self, input_shape):
