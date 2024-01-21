@@ -71,7 +71,6 @@ def clean_data():
     return df
 
 def is_independent(graph, vertex_set):
-    """ Check if a set of vertices is an independent set in the graph """
     for vertex in vertex_set:
         for neighbor in graph[vertex]:
             if neighbor in vertex_set:
@@ -79,7 +78,6 @@ def is_independent(graph, vertex_set):
     return True
 
 def largest_independent_set(graph, start, independent_set, max_set):
-    """ Recursive backtracking function to find the largest independent set """
     if start == len(graph):
         if len(independent_set) > len(max_set[0]):
             max_set[0] = independent_set.copy()
@@ -93,7 +91,6 @@ def largest_independent_set(graph, start, independent_set, max_set):
     largest_independent_set(graph, start + 1, independent_set, max_set)
 
 def find_largest_independent_set(graph):
-    """ Wrapper function to find the largest independent set """
     max_set = [set()]
     largest_independent_set(graph, 0, set(), max_set)
     return max_set[0]
