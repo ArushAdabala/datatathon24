@@ -1,8 +1,8 @@
 from tensorflow import keras
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.metrics import RootMeanSquaredError
-from kerastuner import HyperModel, Objective
-from kerastuner.tuners import RandomSearch
+from keras_tuner import HyperModel, Objective
+from keras_tuner.tuners import RandomSearch
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import numpy as np
@@ -10,6 +10,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 from cleaning import *
 import matplotlib.pyplot as plt
 from tensorflow.keras.utils import plot_model
+from sklearn.preprocessing import RobustScaler
 
 class MyHyperModel(HyperModel):
     def __init__(self, input_shape):
@@ -21,14 +22,14 @@ class MyHyperModel(HyperModel):
                                      min_value=32,
                                      max_value=256,
                                      step=32),
-                        activation='relu',
+                        activation='elu',
                         input_shape=self.input_shape))
         for i in range(hp.Int('n_layers', 1, 5)):
             model.add(Dense(units=hp.Int('units_hidden_' + str(i),
                                          min_value=32,
                                          max_value=256,
                                          step=32),
-                            activation='relu'))
+                            activation='elu'))
             model.add(Dropout(rate=hp.Float('dropout_' + str(i),
                                             min_value=0.0,
                                             max_value=0.5,
@@ -49,11 +50,21 @@ oil_prod = main_data.pop("OilPeakRate")
 # Split data into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(main_data.to_numpy(), oil_prod.to_numpy(), test_size=0.2,
                                                     random_state=7413)
-
+"""
 # Normalize features
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
+"""
+
+
+
+# Normalize features using RobustScaler
+scaler = RobustScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+
 
 
 # Initialize the tuner
@@ -67,10 +78,10 @@ tuner = RandomSearch(
 )
 
 # Define early stopping criteria
-early_stopper = EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)
+early_stopper = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 
 # Perform hyperparameter tuning
-tuner.search(X_train, y_train, epochs=100, validation_split=0.2, callbacks=[early_stopper])
+tuner.search(X_train, y_train, epochs=300, validation_split=0.2, callbacks=[early_stopper])
 
 # Get the best hyperparameters
 best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
