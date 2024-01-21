@@ -15,7 +15,7 @@ df, colnames = remove_correlations(df,0.9)
 
 
 # Plot coordinate values
-# plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
+plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
 plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
 # plt.scatter(df['surface_x'], df['surface_y'], c=range(df.shape[0]))
 plt.show()

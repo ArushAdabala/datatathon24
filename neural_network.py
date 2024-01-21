@@ -120,3 +120,7 @@ sampled_predictions = predictions[indices]
 sampled_actuals = y_test[indices]
 
 annotated_bar_chart(sample_size, sampled_actuals, sampled_predictions, indices)
+
+plt.scatter(main_data['surface_x'][:2326], main_data['surface_y'][:2326], c=np.log(predictions + np.e))
+plt.scatter(main_data['surface_x'][:2326], main_data['surface_y'][:2326], c=range(2326))
+plt.show()
