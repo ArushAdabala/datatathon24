@@ -59,7 +59,7 @@ X_test = scaler.transform(X_test)
 tuner = RandomSearch(
     MyHyperModel(input_shape=(X_train.shape[1],)),
     objective=Objective("val_root_mean_squared_error", direction="min"),
-    max_trials=20,
+    max_trials=10,
     executions_per_trial=1,
     directory='my_dir',
     project_name='keras_tuner_oil_peak_rate'
@@ -84,6 +84,28 @@ history = model.fit(X_train, y_train, epochs=1000, batch_size=32, validation_spl
 loss, rmse = model.evaluate(X_test, y_test)
 print(f"Test Loss: {loss:.4f}, Test RMSE: {rmse:.4f}")
 
+# Plotting the learning curves
+plt.figure(figsize=(12, 6))
+
+# Plot training & validation loss values
+plt.subplot(1, 2, 1)
+plt.plot(history.history['loss'], label='Train')
+plt.plot(history.history['val_loss'], label='Validation')
+plt.title('Model loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend()
+
+# Plot training & validation RMSE values
+plt.subplot(1, 2, 2)
+plt.plot(history.history['root_mean_squared_error'], label='Train RMSE')
+plt.plot(history.history['val_root_mean_squared_error'], label='Validation RMSE')
+plt.title('Root Mean Squared Error')
+plt.ylabel('RMSE')
+plt.xlabel('Epoch')
+plt.legend()
+
+plt.show()
 
 # Generate predictions
 predictions = model.predict(X_test).flatten()
