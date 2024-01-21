@@ -45,6 +45,8 @@ def clean_data():
 
     df = pd.read_csv("data/training.csv")
     df = df.drop('Unnamed: 0', axis=1)
+    df = df.drop('pad_id', axis = 1)
+    df = df.drop('frac_type', axis=1)
     ##df.dropna(subset = ['bh_x','bh_y'], inplace = True)
     df.dropna(subset = ['OilPeakRate'], inplace = True)
 
@@ -66,8 +68,38 @@ def clean_data():
     # # https://stackoverflow.com/questions/21827594/raise-linalgerrorsvd-did-not-converge-linalgerror-svd-did-not-converge-in-m
     for column in df:
         df = df[~df[column].isin([math.inf])]
-    # for column in df:
-    #     percent = ((25058 - df[column].isna().sum()) / 25058)
-    #     # print(column + " : " + str(percent))
 
     return df
+
+def remove_correlations(df):
+    df.drop("OilPeakRate", axis = 1)
+    corr = df.corr()
+    corr_arr = corr.to_numpy()
+
+
+
+    graph = {}
+    for row in range(corr_arr.shape[0]):
+        graph[row] = []
+
+    for row in range(corr_arr.shape[0]):
+        for col in range(corr_arr.shape[1]):
+            if col < row:
+                if corr_arr[row,col] > 0.9:
+                    graph[col].append(row)
+                    graph[row].append(col)
+
+
+    independent_set = set()
+
+    # Iterate through all vertices in the graph
+    for vertex in graph:
+        # Check if the vertex is not adjacent to any vertex in the independent set
+        if all(neighbour not in independent_set for neighbour in graph[vertex]):
+            independent_set.add(vertex)
+
+
+    selected = [list(corr.head())[col] for col in independent_set]
+    print(selected)
+    return df[selected]
+
