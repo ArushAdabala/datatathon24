@@ -132,7 +132,7 @@ annotated_bar_chart(sample_size, sampled_actuals, sampled_predictions, indices)
 print("Predictions and actual are exactly the same: ", np.allclose(predictions, y_test))
 well_prediction_comparison_plot(X_test, predictions, y_test)
 
-scoring_df = remove_correlations(clean_test(), 0.8)[0]
+scoring_df = df[remove_correlations(clean_test(), 0.8)[1]]
 
 # Preprocess the scoring dataset
 scoring_data = scaler.transform(scoring_df)

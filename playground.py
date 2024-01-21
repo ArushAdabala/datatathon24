@@ -12,6 +12,7 @@ pd.set_option('chained_assignment',None)
 
 df = clean_data()
 df, colnames = remove_correlations(df,0.9)
+print(df)
 
 
 # Plot coordinate values
