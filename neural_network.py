@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 from tensorflow.keras.callbacks import EarlyStopping
-from cleaning import clean_data
+from cleaning import *
 import matplotlib.pyplot as plt
 
 
@@ -40,8 +40,9 @@ class MyHyperModel(HyperModel):
                       metrics=[RootMeanSquaredError()])
         return model
 
+
 # Clean and prepare the data
-main_data = clean_data()
+main_data = remove_correlations(clean_data(), 0.9)
 oil_prod = main_data.pop("OilPeakRate")
 
 # Split data into training and test sets
@@ -58,7 +59,7 @@ X_test = scaler.transform(X_test)
 tuner = RandomSearch(
     MyHyperModel(input_shape=(X_train.shape[1],)),
     objective=Objective("val_root_mean_squared_error", direction="min"),
-    max_trials=10,
+    max_trials=20,
     executions_per_trial=1,
     directory='my_dir',
     project_name='keras_tuner_oil_peak_rate'
@@ -84,54 +85,8 @@ loss, rmse = model.evaluate(X_test, y_test)
 print(f"Test Loss: {loss:.4f}, Test RMSE: {rmse:.4f}")
 
 
-
-# Plotting the learning curves
-plt.figure(figsize=(12, 6))
-
-# Plot training & validation loss values
-plt.subplot(1, 2, 1)
-plt.plot(history.history['loss'], label='Train')
-plt.plot(history.history['val_loss'], label='Validation')
-plt.title('Model loss')
-plt.ylabel('Loss')
-plt.xlabel('Epoch')
-plt.legend()
-
-# Plot training & validation RMSE values
-plt.subplot(1, 2, 2)
-plt.plot(history.history['root_mean_squared_error'], label='Train RMSE')
-plt.plot(history.history['val_root_mean_squared_error'], label='Validation RMSE')
-plt.title('Root Mean Squared Error')
-plt.ylabel('RMSE')
-plt.xlabel('Epoch')
-plt.legend()
-
-plt.show()
-
 # Generate predictions
 predictions = model.predict(X_test).flatten()
-
-"""
-
-# Calculate differences between predictions and actual values
-differences = predictions - y_test
-# Plot the differences
-plt.figure(figsize=(10, 6))
-plt.scatter(range(len(differences)), differences, alpha=0.6)
-plt.title('Differences between Predictions and Actual Values')
-plt.xlabel('Test Sample Index')
-plt.ylabel('Prediction - Actual Value')
-plt.show()
-
-# plot a histogram of the differences
-plt.figure(figsize=(10, 6))
-plt.hist(differences, bins=50, alpha=0.7, color='blue')
-plt.title('Histogram of Prediction Differences')
-plt.xlabel('Prediction - Actual Value')
-plt.ylabel('Frequency')
-plt.show()
-"""
-
 
 # Select a random sample of 25 or 30 values from the test set and their corresponding predictions
 sample_size = 25  # or 30 if you prefer
