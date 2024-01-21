@@ -9,7 +9,7 @@ import numpy as np
 from tensorflow.keras.callbacks import EarlyStopping
 from cleaning import *
 import matplotlib.pyplot as plt
-
+from tensorflow.keras.utils import plot_model
 
 class MyHyperModel(HyperModel):
     def __init__(self, input_shape):
@@ -83,6 +83,10 @@ history = model.fit(X_train, y_train, epochs=1000, batch_size=32, validation_spl
 # Evaluate the model
 loss, rmse = model.evaluate(X_test, y_test)
 print(f"Test Loss: {loss:.4f}, Test RMSE: {rmse:.4f}")
+
+dot_img_file = '/results/model_1.png'
+keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)
+
 
 # Plotting the learning curves
 plt.figure(figsize=(12, 6))
