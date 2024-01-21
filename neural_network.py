@@ -1,16 +1,17 @@
 from tensorflow import keras
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.metrics import RootMeanSquaredError
-from keras_tuner import HyperModel, Objective
-from keras_tuner.tuners import RandomSearch
+from kerastuner import HyperModel, Objective
+from kerastuner.tuners import RandomSearch
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 from tensorflow.keras.callbacks import EarlyStopping
 from cleaning import *
 import matplotlib.pyplot as plt
-from tensorflow.keras.utils import plot_model
-from sklearn.preprocessing import RobustScaler
+from compute import annotated_bar_chart
+
+# Model number 2: Neural Network
 
 class MyHyperModel(HyperModel):
     def __init__(self, input_shape):
@@ -22,14 +23,14 @@ class MyHyperModel(HyperModel):
                                      min_value=32,
                                      max_value=256,
                                      step=32),
-                        activation='elu',
+                        activation='relu',
                         input_shape=self.input_shape))
         for i in range(hp.Int('n_layers', 1, 5)):
             model.add(Dense(units=hp.Int('units_hidden_' + str(i),
                                          min_value=32,
                                          max_value=256,
                                          step=32),
-                            activation='elu'))
+                            activation='relu'))
             model.add(Dropout(rate=hp.Float('dropout_' + str(i),
                                             min_value=0.0,
                                             max_value=0.5,
@@ -44,27 +45,17 @@ class MyHyperModel(HyperModel):
 
 # Clean and prepare the data
 df = pd.read_csv("data/training.csv")
-main_data = remove_correlations(clean_data(), 0.9)
+main_data, colnames = remove_correlations(clean_data(), 0.9)
 oil_prod = main_data.pop("OilPeakRate")
 
 # Split data into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(main_data.to_numpy(), oil_prod.to_numpy(), test_size=0.2,
                                                     random_state=7413)
-"""
+
 # Normalize features
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
-"""
-
-
-
-# Normalize features using RobustScaler
-scaler = RobustScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-
-
 
 
 # Initialize the tuner
@@ -78,10 +69,10 @@ tuner = RandomSearch(
 )
 
 # Define early stopping criteria
-early_stopper = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+early_stopper = EarlyStopping(monitor='val_loss', patience=100, restore_best_weights=True)
 
 # Perform hyperparameter tuning
-tuner.search(X_train, y_train, epochs=300, validation_split=0.2, callbacks=[early_stopper])
+tuner.search(X_train, y_train, epochs=100, validation_split=0.2, callbacks=[early_stopper])
 
 # Get the best hyperparameters
 best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
@@ -95,10 +86,6 @@ history = model.fit(X_train, y_train, epochs=1000, batch_size=32, validation_spl
 # Evaluate the model
 loss, rmse = model.evaluate(X_test, y_test)
 print(f"Test Loss: {loss:.4f}, Test RMSE: {rmse:.4f}")
-
-dot_img_file = './results/model_1.png'
-keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)
-
 
 # Plotting the learning curves
 plt.figure(figsize=(12, 6))
@@ -132,34 +119,8 @@ indices = np.random.choice(range(len(y_test)), sample_size, replace=False)
 sampled_predictions = predictions[indices]
 sampled_actuals = y_test[indices]
 
-# Create a bar plot showing the predicted vs actual values
-x = np.arange(sample_size)  # the label locations
-width = 0.35  # the width of the bars
+annotated_bar_chart(sample_size, sampled_actuals, sampled_predictions, indices)
 
-fig, ax = plt.subplots(figsize=(14, 8))
-rects1 = ax.bar(x - width/2, sampled_actuals, width, label='Actual')
-rects2 = ax.bar(x + width/2, sampled_predictions, width, label='Predicted')
-
-# Add some text for labels, title, and custom x-axis tick labels, etc.
-ax.set_ylabel('Values')
-ax.set_title('Comparison of Actual and Predicted Values for Random Test Samples')
-ax.set_xticks(x)
-ax.set_xticklabels(indices)
-ax.legend()
-
-# Function to attach a text label above each bar in *rects*, displaying its height.
-def autolabel(rects):
-    for rect in rects:
-        height = rect.get_height()
-        ax.annotate('{}'.format(height),
-                    xy=(rect.get_x() + rect.get_width() / 2, height),
-                    xytext=(0, 3),  # 3 points vertical offset
-                    textcoords="offset points",
-                    ha='center', va='bottom')
-
-autolabel(rects1)
-autolabel(rects2)
-
-fig.tight_layout()
-
+plt.scatter(main_data['surface_x'][:2326], main_data['surface_y'][:2326], c=np.log(predictions + np.e))
+plt.scatter(main_data['surface_x'][:2326], main_data['surface_y'][:2326], c=range(2326))
 plt.show()
