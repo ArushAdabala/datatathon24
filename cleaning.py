@@ -40,6 +40,9 @@ def print_corr(df):
 Returns dataframe of cleaned training.csv
 """
 def clean_data():
+    arr = np.loadtxt("data/training.csv",
+                     delimiter=",", dtype=str)
+
     df = pd.read_csv("data/training.csv")
     df = df.drop('Unnamed: 0', axis=1)
     df = df.drop('pad_id', axis = 1)

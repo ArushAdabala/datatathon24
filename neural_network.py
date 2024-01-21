@@ -42,7 +42,9 @@ class MyHyperModel(HyperModel):
 
 
 # Clean and prepare the data
-main_data = remove_correlations(clean_data(), 0.9)
+df = pd.read_csv("data/training.csv")
+cleaned = remove_correlations(df, 0.9)
+main_data = clean_data(cleaned)
 oil_prod = main_data.pop("OilPeakRate")
 
 # Split data into training and test sets
