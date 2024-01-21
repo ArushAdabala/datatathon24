@@ -133,6 +133,7 @@ print("Predictions and actual are exactly the same: ", np.allclose(predictions, 
 well_prediction_comparison_plot(X_test, predictions, y_test)
 
 scoring_df = clean_test()
+colnames.pop(-1)
 scoring_df = scoring_df[colnames]
 
 # Preprocess the scoring dataset
