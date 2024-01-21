@@ -84,3 +84,28 @@ def annotated_bar_chart(sample_size, sampled_actuals, sampled_predictions, indic
     fig.tight_layout()
 
     plt.show()
+
+
+def well_prediction_comparison_plot(data, prediction, actual):
+    # Plot the wells with predictions and actual side-by-side
+    # Inputs:
+    #  - data: an array with as many rows as prediciton and actual and whose first two columns are x and y
+    #  - prediction: model's predictions of each well
+    #  - actual: actual output of each well
+    # Output: none (shows plots)
+    ultimate_min = np.min(np.vstack((prediction, actual)))
+    ultimate_max = np.max(np.vstack((prediction, actual)))
+    plt.subplot(1, 2, 1)
+    plt.title("Predictions")
+    plt.scatter(data[:, 0], data[:, 1],
+                c=np.log(prediction + np.e),
+                vmin=np.log(ultimate_min + np.e), vmax=np.log(ultimate_max + np.e))
+
+    plt.subplot(1, 2, 2)
+    plt.title("Actual")
+    plt.scatter(data[:, 0], data[:, 1],
+                c=np.log(prediction + np.e),
+                vmin=np.log(ultimate_min + np.e), vmax=np.log(ultimate_max + np.e))
+
+    plt.colorbar()
+    plt.show()

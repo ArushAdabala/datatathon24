@@ -9,7 +9,7 @@ import numpy as np
 from tensorflow.keras.callbacks import EarlyStopping
 from cleaning import *
 import matplotlib.pyplot as plt
-from compute import annotated_bar_chart
+from compute import annotated_bar_chart, well_prediction_comparison_plot
 
 # Model number 2: Neural Network
 
@@ -21,20 +21,20 @@ class MyHyperModel(HyperModel):
         model = keras.Sequential()
         model.add(Dense(units=hp.Int('units_input',
                                      min_value=32,
-                                     max_value=256,
+                                     max_value=320,
                                      step=32),
                         activation='relu',
                         input_shape=self.input_shape))
         for i in range(hp.Int('n_layers', 1, 5)):
             model.add(Dense(units=hp.Int('units_hidden_' + str(i),
                                          min_value=32,
-                                         max_value=256,
+                                         max_value=320,
                                          step=32),
                             activation='relu'))
             model.add(Dropout(rate=hp.Float('dropout_' + str(i),
                                             min_value=0.0,
                                             max_value=0.5,
-                                            step=0.1)))
+                                            step=0.05)))
         model.add(Dense(1))
         model.compile(optimizer=keras.optimizers.Adam(hp.Choice('learning_rate',
                                                                 values=[1e-2, 1e-3, 1e-4])),
@@ -119,15 +119,9 @@ indices = np.random.choice(range(len(y_test)), sample_size, replace=False)
 sampled_predictions = predictions[indices]
 sampled_actuals = y_test[indices]
 
+# Plot bar chart of some sample predictions and actual values
 annotated_bar_chart(sample_size, sampled_actuals, sampled_predictions, indices)
 
-ultimate_min = np.min(np.vstack((predictions, y_test)))
-ultimate_max = np.max(np.vstack((predictions, y_test)))
-
-plt.scatter(X_test[:, 0], X_test[:, 1], c = np.log(predictions + np.e), vmin=np.log(ultimate_min + np.e), vmax=np.log(ultimate_max + np.e))
-plt.colorbar()
-plt.show()
-
-plt.scatter(X_test[:, 0], X_test[:, 1], c = np.log(y_test + np.e), vmin=np.log(ultimate_min + np.e), vmax=np.log(ultimate_max + np.e))
-plt.colorbar()
-plt.show()
+# Plot a comparison of wells by position
+print(np.allclose(predictions, y_test))
+well_prediction_comparison_plot(X_test, predictions, y_test)

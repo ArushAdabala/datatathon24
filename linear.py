@@ -4,7 +4,7 @@ import numpy as np
 import sklearn as skl
 from sklearn.linear_model import ElasticNet, ElasticNetCV
 from cleaning import clean_data, remove_correlations
-from compute import model
+from compute import model, well_prediction_comparison_plot
 
 # Disable warnings (I hate being responsible)
 # pd.options.mode.chained_assignment = None  # default='warn'
@@ -51,3 +51,5 @@ plt.title("Coefficients of Linear Model")
 plt.subplots_adjust(bottom=0.5)
 plt.show()
 
+# Plot the wells with predictions
+well_prediction_comparison_plot(computer.testing_data, computer.results, computer.actual)
