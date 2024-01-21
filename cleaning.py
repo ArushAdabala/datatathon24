@@ -16,8 +16,6 @@ def string_columns_to_float(df):
                 # https://stackoverflow.com/questions/20625582/how-to-deal-with-settingwithcopywarning-in-pandas
                 # df[colname][df[colname] == values[i]] = i+1
                 df.loc[df[colname] == values[i], colname] = i+1
-            # print(values)
-            # print(df[colname])
 
 
 def print_corr(df):
@@ -35,26 +33,24 @@ def print_corr(df):
         for idx in [i for i in high_corr_idxs if i < row]:  # Only need lower triangle
             print(corr_arr[row, idx], list(corr.head())[row], list(corr.head())[idx])
 
-"""
-Returns dataframe of cleaned training.csv
-"""
+
 def clean_data():
-    arr = np.loadtxt("data/training.csv",
-                     delimiter=",", dtype=str)
+    # Returns dataframe of cleaned training.csv
 
     df = pd.read_csv("data/training.csv")
     df = df.drop('Unnamed: 0', axis=1)
     df = df.drop('pad_id', axis = 1)
     df = df.drop('frac_type', axis=1)
-    ##df.dropna(subset = ['bh_x','bh_y'], inplace = True)
-    df.dropna(subset = ['OilPeakRate'], inplace = True)
+    df.dropna(subset=['OilPeakRate'], inplace=True)
 
     string_columns_to_float(df)
 
+    # Optionally drop the top and bottom 15 OilPeakRates (possible outliers)
     # for o in range(15):
     #     df.drop(df['OilPeakRate'].idxmax(), inplace=True)
     #     df.drop(df['OilPeakRate'].idxmin(), inplace=True)
 
+    # Drop known problem columns
     df_stages = df[~df["number_of_stages"].isna()]
     df = df[df["number_of_stages"].isna()]
     df = df.drop('number_of_stages', axis=1)
@@ -70,12 +66,14 @@ def clean_data():
 
     return df
 
+
 def is_independent(graph, vertex_set):
     for vertex in vertex_set:
         for neighbor in graph[vertex]:
             if neighbor in vertex_set:
                 return False
     return True
+
 
 def largest_independent_set(graph, start, independent_set, max_set):
     if start == len(graph):
@@ -90,17 +88,18 @@ def largest_independent_set(graph, start, independent_set, max_set):
     # Exclude the vertex at 'start' from the set
     largest_independent_set(graph, start + 1, independent_set, max_set)
 
+
 def find_largest_independent_set(graph):
     max_set = [set()]
     largest_independent_set(graph, 0, set(), max_set)
     return max_set[0]
 
+
 def remove_correlations(df, base):
+    # base should be 0.9 or 0.8
     df.drop("OilPeakRate", axis = 1)
     corr = df.corr()
     corr_arr = corr.to_numpy()
-
-
 
     graph = {}
     for row in range(corr_arr.shape[0]):
@@ -113,7 +112,6 @@ def remove_correlations(df, base):
                     graph[col].append(row)
                     graph[row].append(col)
 
-
     independent_set = find_largest_independent_set(graph)
 
     # Iterate through all vertices in the graph
@@ -121,7 +119,6 @@ def remove_correlations(df, base):
         # Check if the vertex is not adjacent to any vertex in the independent set
         if all(neighbour not in independent_set for neighbour in graph[vertex]):
             independent_set.add(vertex)
-
 
     selected = [list(corr.head())[col] for col in independent_set]
 
