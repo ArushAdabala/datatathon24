@@ -84,7 +84,7 @@ history = model.fit(X_train, y_train, epochs=1000, batch_size=32, validation_spl
 loss, rmse = model.evaluate(X_test, y_test)
 print(f"Test Loss: {loss:.4f}, Test RMSE: {rmse:.4f}")
 
-dot_img_file = '/results/model_1.png'
+dot_img_file = './results/model_1.png'
 keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)
 
 
