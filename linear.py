@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sklearn as skl
 from sklearn.linear_model import ElasticNet, ElasticNetCV
-from sklearn import preprocessing
-import math
 from cleaning import clean_data
 from compute import model
 
@@ -44,7 +42,7 @@ model.fit(computer.training_data, computer.training_results)
 x = model.coef_
 
 # computer.set_results(x)
-computer.results = model.predict(computer.testing_data)
+computer.set_results(model.predict(computer.testing_data))
 
 print("Linear Model Testing RMSE: ", computer.get_RMSE())
 
