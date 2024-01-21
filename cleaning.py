@@ -49,14 +49,13 @@ def clean_test():
     #     df.drop(df['OilPeakRate'].idxmin(), inplace=True)
 
     # Drop known problem columns
-    df_stages = df[~df["number_of_stages"].isna()]
     df = df[df["number_of_stages"].isna()]
     df = df.drop('number_of_stages', axis=1)
     df = df.drop('average_stage_length', axis=1)
     df = df.drop('average_proppant_per_stage', axis=1)
     df = df.drop('average_frac_fluid_per_stage', axis=1)
     df = df.dropna()
-
+    print(df)
     # infs will cause models to fail
     # # https://stackoverflow.com/questions/21827594/raise-linalgerrorsvd-did-not-converge-linalgerror-svd-did-not-converge-in-m
     for column in df:

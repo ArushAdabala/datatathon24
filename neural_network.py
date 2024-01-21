@@ -10,6 +10,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 from cleaning import *
 import matplotlib.pyplot as plt
 from compute import annotated_bar_chart, well_prediction_comparison_plot
+import openpyxl
 
 # Model number 2: Neural Network
 
@@ -132,12 +133,13 @@ annotated_bar_chart(sample_size, sampled_actuals, sampled_predictions, indices)
 print("Predictions and actual are exactly the same: ", np.allclose(predictions, y_test))
 well_prediction_comparison_plot(X_test, predictions, y_test)
 
-scoring_df = clean_test()
+scoring_df = pd.read_csv("data/scoring.csv")
+string_columns_to_float(scoring_df)
 colnames.pop(-1)
-scoring_df = scoring_df[colnames]
-
+scoring_df = scoring_df[scoring_df.columns.intersection(colnames)]
+print(scoring_df)
 # Preprocess the scoring dataset
-scoring_data = scaler.transform(scoring_df)
+scoring_data = scaler.transform(scoring_df.to_numpy())
 
 # Generate predictions
 scoring_predictions = model.predict(scoring_data).flatten()
