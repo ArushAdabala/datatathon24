@@ -104,8 +104,9 @@ def well_prediction_comparison_plot(data, prediction, actual):
     plt.subplot(1, 2, 2)
     plt.title("Actual")
     plt.scatter(data[:, 0], data[:, 1],
-                c=np.log(prediction + np.e),
+                c=np.log(actual + np.e),
                 vmin=np.log(ultimate_min + np.e), vmax=np.log(ultimate_max + np.e))
 
     plt.colorbar()
+    plt.suptitle("Model vs Actual Comparison (log color scale)")
     plt.show()

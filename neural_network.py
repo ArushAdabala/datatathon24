@@ -123,5 +123,5 @@ sampled_actuals = y_test[indices]
 annotated_bar_chart(sample_size, sampled_actuals, sampled_predictions, indices)
 
 # Plot a comparison of wells by position
-print(np.allclose(predictions, y_test))
+print("Predictions and actual are exactly the same: ", np.allclose(predictions, y_test))
 well_prediction_comparison_plot(X_test, predictions, y_test)
