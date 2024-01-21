@@ -73,13 +73,13 @@ tuner = RandomSearch(
 #early_stopper = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 early_stopper = EarlyStopping(
     monitor='val_root_mean_squared_error',  # Monitoring validation RMSE
-    patience=5,  # Number of epochs with no improvement after which training will be stopped
+    patience=10,  # Number of epochs with no improvement after which training will be stopped
     restore_best_weights=True,  # Restores model weights from the epoch with the best value of the monitored metric
     min_delta=0.001  # Minimum change in the monitored quantity to qualify as an improvement
 )
 
 # Perform hyperparameter tuning
-tuner.search(X_train, y_train, epochs=100, validation_split=0.2, callbacks=[early_stopper])
+tuner.search(X_train, y_train, epochs=1000, validation_split=0.2, callbacks=[early_stopper])
 
 # Get the best hyperparameters
 best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
