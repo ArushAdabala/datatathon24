@@ -6,7 +6,7 @@ from sklearn.linear_model import ElasticNet, ElasticNetCV
 from cleaning import clean_data
 from compute import model
 
-# I hate being responsible
+# Disable warnings (I hate being responsible)
 # pd.options.mode.chained_assignment = None  # default='warn'
 pd.set_option('chained_assignment',None)
 
