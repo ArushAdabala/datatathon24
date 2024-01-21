@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 from tensorflow.keras.callbacks import EarlyStopping
-from cleaning import clean_data
+from cleaning import *
 import matplotlib.pyplot as plt
 
 
@@ -40,8 +40,9 @@ class MyHyperModel(HyperModel):
                       metrics=[RootMeanSquaredError()])
         return model
 
+
 # Clean and prepare the data
-main_data = clean_data()
+main_data = remove_correlations(clean_data(), 0.9)
 oil_prod = main_data.pop("OilPeakRate")
 
 # Split data into training and test sets
@@ -58,7 +59,7 @@ X_test = scaler.transform(X_test)
 tuner = RandomSearch(
     MyHyperModel(input_shape=(X_train.shape[1],)),
     objective=Objective("val_root_mean_squared_error", direction="min"),
-    max_trials=10,
+    max_trials=20,
     executions_per_trial=1,
     directory='my_dir',
     project_name='keras_tuner_oil_peak_rate'
@@ -83,12 +84,6 @@ history = model.fit(X_train, y_train, epochs=1000, batch_size=32, validation_spl
 loss, rmse = model.evaluate(X_test, y_test)
 print(f"Test Loss: {loss:.4f}, Test RMSE: {rmse:.4f}")
 
-
-
-# Plotting the learning curves
-plt.figure(figsize=(12, 6))
-
-plt.show()
 
 # Generate predictions
 predictions = model.predict(X_test).flatten()
