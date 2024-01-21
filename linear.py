@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sklearn as skl
 from sklearn.linear_model import ElasticNet, ElasticNetCV
-from cleaning import clean_data
+from cleaning import clean_data, remove_correlations
 from compute import model
 
 # Disable warnings (I hate being responsible)
@@ -11,20 +11,12 @@ from compute import model
 pd.set_option('chained_assignment',None)
 
 df = clean_data()
-# Plot coordinate values
-# plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
-# plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
-# # plt.scatter(df['surface_x'], df['surface_y'], c=range(df.shape[0]))
-# plt.show()
-
+df, colnames = remove_correlations(df, 0.8)
 # Load data into numpy array
 df_arr = np.float64(df.to_numpy())
 # Randomly shuffle rows so that there isn't any training/testing dataset bias
 np.random.shuffle(df_arr)
 
-# Plot all positions of wells with indices to see that the shuffle was successful
-# plt.scatter(df_arr[:,0], df_arr[:,1], c=range(df.shape[0]))
-# plt.show()
 
 computer = model(df_arr, 1000)
 computer.scale()
@@ -47,14 +39,15 @@ computer.set_results(model.predict(computer.testing_data))
 print("Linear Model Testing RMSE: ", computer.get_RMSE())
 
 # Plot some examples of predictions
-# computer.plot_bars(25)
+computer.plot_bars(25)
 
 # Plot the residuals
 computer.plot_residuals(1)
 
 # Plot coefficients
-# plt.bar(list(df.head())[:-1], x)
-# plt.xticks(fontsize=10, rotation=-90)
-# plt.title("Coefficients")
-# plt.show()
+plt.bar(colnames[:-1], x)
+plt.xticks(fontsize=10, rotation=-90)
+plt.title("Coefficients of Linear Model")
+plt.subplots_adjust(bottom=0.5)
+plt.show()
 

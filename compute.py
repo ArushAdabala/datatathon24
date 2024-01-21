@@ -33,11 +33,13 @@ class model():
         # Plots a sample of predictions and their corresponding actual values
         # Input: num_bars is number of bars on chart
         print("Plotting bars")
-        x_axis = np.arange(num_bars)
-        plt.bar(x_axis - 0.2, self.results[:num_bars], 0.4, 'prediction')
-        plt.bar(x_axis + 0.2, self.actual[:num_bars], 0.4, 'actual')
-        plt.title("Sample of predictions vs actual")
-        plt.show()
+        # x_axis = np.arange(num_bars)
+        # plt.bar(x_axis - 0.2, self.results[:num_bars], 0.4, label='prediction')
+        # plt.bar(x_axis + 0.2, self.actual[:num_bars], 0.4, label='actual')
+        # plt.legend()
+        # plt.title("Sample of predictions vs actual")
+        # plt.show()
+        annotated_bar_chart(num_bars, self.actual[:num_bars], self.results[:num_bars], list(range(num_bars)))
 
     def plot_residuals(self, col_idx):
         # Plot residuals ordered by the value of column col_idx
@@ -48,3 +50,37 @@ class model():
         plt.plot(range(len(diff)), diff[sort_idxs], 'r.')
         plt.title(f"Residuals ordered by column {col_idx}")
         plt.show()
+
+
+def annotated_bar_chart(sample_size, sampled_actuals, sampled_predictions, indices):
+    # Create a bar plot showing the predicted vs actual values
+    x = np.arange(sample_size)  # the label locations
+    width = 0.35  # the width of the bars
+
+    fig, ax = plt.subplots(figsize=(14, 8))
+    rects1 = ax.bar(x - width / 2, np.floor(sampled_actuals), width, label='Actual')
+    rects2 = ax.bar(x + width / 2, np.floor(sampled_predictions), width, label='Predicted')
+
+    # Add some text for labels, title, and custom x-axis tick labels, etc.
+    ax.set_ylabel('Values')
+    ax.set_title('Comparison of Actual and Predicted Values for Random Test Samples')
+    ax.set_xticks(x)
+    ax.set_xticklabels(indices)
+    ax.legend()
+
+    # Function to attach a text label above each bar in *rects*, displaying its height.
+    def autolabel(rects):
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate('{}'.format(height),
+                        xy=(rect.get_x() + rect.get_width() / 2, height),
+                        xytext=(0, 3),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha='center', va='bottom')
+
+    autolabel(rects1)
+    autolabel(rects2)
+
+    fig.tight_layout()
+
+    plt.show()
