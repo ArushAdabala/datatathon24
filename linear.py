@@ -12,10 +12,10 @@ pd.set_option('chained_assignment',None)
 
 df = clean_data()
 # Plot coordinate values
-plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
-plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
-# plt.scatter(df['surface_x'], df['surface_y'], c=range(df.shape[0]))
-plt.show()
+# plt.plot(df[['surface_x', 'bh_x']].T, df[['surface_y', 'bh_y']].T, 'r')
+# plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
+# # plt.scatter(df['surface_x'], df['surface_y'], c=range(df.shape[0]))
+# plt.show()
 
 # Load data into numpy array
 df_arr = np.float64(df.to_numpy())

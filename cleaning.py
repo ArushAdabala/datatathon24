@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sklearn as skl
 from sklearn.linear_model import ElasticNet
-import math
 
 
 def string_columns_to_float(df):
@@ -33,7 +32,7 @@ def print_corr(df):
         # Get all columns in upper triangle whose abs is greater than 0.5
         high_corr_idxs = np.nonzero(np.abs(corr_arr[row]) > 0.5)[0]
         # print(high_corr_idxs)
-        for idx in [i for i in high_corr_idxs if i < row]:
+        for idx in [i for i in high_corr_idxs if i < row]:  # Only need lower triangle
             print(corr_arr[row, idx], list(corr.head())[row], list(corr.head())[idx])
 
 """
@@ -67,7 +66,7 @@ def clean_data():
     # infs will cause models to fail
     # # https://stackoverflow.com/questions/21827594/raise-linalgerrorsvd-did-not-converge-linalgerror-svd-did-not-converge-in-m
     for column in df:
-        df = df[~df[column].isin([math.inf])]
+        df = df[~df[column].isin([np.inf])]
 
     return df
 
