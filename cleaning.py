@@ -71,7 +71,35 @@ def clean_data():
 
     return df
 
-def remove_correlations(df):
+def is_independent(graph, vertex_set):
+    """ Check if a set of vertices is an independent set in the graph """
+    for vertex in vertex_set:
+        for neighbor in graph[vertex]:
+            if neighbor in vertex_set:
+                return False
+    return True
+
+def largest_independent_set(graph, start, independent_set, max_set):
+    """ Recursive backtracking function to find the largest independent set """
+    if start == len(graph):
+        if len(independent_set) > len(max_set[0]):
+            max_set[0] = independent_set.copy()
+        return
+
+    # Include the vertex at 'start' in the set if it's independent
+    if is_independent(graph, independent_set | {start}):
+        largest_independent_set(graph, start + 1, independent_set | {start}, max_set)
+
+    # Exclude the vertex at 'start' from the set
+    largest_independent_set(graph, start + 1, independent_set, max_set)
+
+def find_largest_independent_set(graph):
+    """ Wrapper function to find the largest independent set """
+    max_set = [set()]
+    largest_independent_set(graph, 0, set(), max_set)
+    return max_set[0]
+
+def remove_correlations(df, base):
     df.drop("OilPeakRate", axis = 1)
     corr = df.corr()
     corr_arr = corr.to_numpy()
@@ -85,12 +113,12 @@ def remove_correlations(df):
     for row in range(corr_arr.shape[0]):
         for col in range(corr_arr.shape[1]):
             if col < row:
-                if corr_arr[row,col] > 0.9:
+                if corr_arr[row,col] > base:
                     graph[col].append(row)
                     graph[row].append(col)
 
 
-    independent_set = set()
+    independent_set = find_largest_independent_set(graph)
 
     # Iterate through all vertices in the graph
     for vertex in graph:
