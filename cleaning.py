@@ -124,6 +124,6 @@ def remove_correlations(df, base):
 
 
     selected = [list(corr.head())[col] for col in independent_set]
-    print(selected)
-    return df[selected]
+
+    return (df[selected],selected)
 
