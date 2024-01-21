@@ -9,6 +9,7 @@ import numpy as np
 from tensorflow.keras.callbacks import EarlyStopping
 from cleaning import *
 import matplotlib.pyplot as plt
+from compute import annotated_bar_chart
 
 # Model number 2: Neural Network
 
@@ -44,7 +45,7 @@ class MyHyperModel(HyperModel):
 
 # Clean and prepare the data
 df = pd.read_csv("data/training.csv")
-main_data = remove_correlations(clean_data(), 0.9)[0]
+main_data, colnames = remove_correlations(clean_data(), 0.9)
 oil_prod = main_data.pop("OilPeakRate")
 
 # Split data into training and test sets
@@ -61,17 +62,17 @@ X_test = scaler.transform(X_test)
 tuner = RandomSearch(
     MyHyperModel(input_shape=(X_train.shape[1],)),
     objective=Objective("val_root_mean_squared_error", direction="min"),
-    max_trials=1,
+    max_trials=10,
     executions_per_trial=1,
     directory='my_dir',
     project_name='keras_tuner_oil_peak_rate'
 )
 
 # Define early stopping criteria
-early_stopper = EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)
+early_stopper = EarlyStopping(monitor='val_loss', patience=100, restore_best_weights=True)
 
 # Perform hyperparameter tuning
-tuner.search(X_train, y_train, epochs=10, validation_split=0.2, callbacks=[early_stopper])
+tuner.search(X_train, y_train, epochs=100, validation_split=0.2, callbacks=[early_stopper])
 
 # Get the best hyperparameters
 best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
@@ -80,7 +81,7 @@ best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
 model = tuner.hypermodel.build(best_hps)
 
 # Train the model with the best hyperparameters
-history = model.fit(X_train, y_train, epochs=10, batch_size=32, validation_split=0.2, callbacks=[early_stopper])
+history = model.fit(X_train, y_train, epochs=1000, batch_size=32, validation_split=0.2, callbacks=[early_stopper])
 
 # Evaluate the model
 loss, rmse = model.evaluate(X_test, y_test)
@@ -118,39 +119,4 @@ indices = np.random.choice(range(len(y_test)), sample_size, replace=False)
 sampled_predictions = predictions[indices]
 sampled_actuals = y_test[indices]
 
-# Create a bar plot showing the predicted vs actual values
-x = np.arange(sample_size)  # the label locations
-width = 0.35  # the width of the bars
-
-fig, ax = plt.subplots(figsize=(14, 8))
-rects1 = ax.bar(x - width/2, sampled_actuals, width, label='Actual')
-rects2 = ax.bar(x + width/2, sampled_predictions, width, label='Predicted')
-
-# Add some text for labels, title, and custom x-axis tick labels, etc.
-ax.set_ylabel('Values')
-ax.set_title('Comparison of Actual and Predicted Values for Random Test Samples')
-ax.set_xticks(x)
-ax.set_xticklabels(indices)
-ax.legend()
-
-# Function to attach a text label above each bar in *rects*, displaying its height.
-
-def autolabel(rects):
-    for rect in rects:
-        height = rect.get_height()
-        ax.annotate('{}'.format(height),
-                    xy=(rect.get_x() + rect.get_width() / 2, height),
-                    xytext=(0, 3),  # 3 points vertical offset
-                    textcoords="offset points",
-                    ha='center', va='bottom')
-
-autolabel(rects1)
-autolabel(rects2)
-
-fig.tight_layout()
-
-plt.scatter(df['surface_x'], df['surface_y'], c=np.log(df['OilPeakRate'] + np.e))
-plt.scatter(df['surface_x'], df['surface_y'], c=range(df.shape[0]))
-plt.show()
-
-plt.show()
+annotated_bar_chart(sample_size, sampled_actuals, sampled_predictions, indices)
